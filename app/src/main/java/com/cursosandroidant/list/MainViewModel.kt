@@ -2,6 +2,8 @@ package com.cursosandroidant.list
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 /****
  * Project: List
@@ -20,21 +22,24 @@ class MainViewModel : ViewModel() {
 
     val errorMsg: MutableLiveData<String> = MutableLiveData()
 
-    fun addItem(itemEntity: ItemEntity){
-        try {
-            interactor.addItem(itemEntity)
-        } catch (e: Exception) {
-            errorMsg.value = e.message
+    fun addItem(itemEntity: ItemEntity) {
+        viewModelScope.launch {
+            try {
+                interactor.addItem(itemEntity)
+            } catch (e: Exception) {
+                errorMsg.value = e.message
+            }
         }
     }
 
-    fun updateItem(itemEntity: ItemEntity){
-        itemEntity.isFavorite = !itemEntity.isFavorite
-
-        try {
-            interactor.updateItem(itemEntity)
-        } catch (e: Exception) {
-            errorMsg.value = e.message
+    fun updateItem(itemEntity: ItemEntity) {
+        viewModelScope.launch {
+            itemEntity.isFavorite = !itemEntity.isFavorite
+            try {
+                interactor.updateItem(itemEntity)
+            } catch (e: Exception) {
+                errorMsg.value = e.message
+            }
         }
     }
 }
